@@ -1,0 +1,22 @@
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: notification-service-group-id
+  mail:
+    host: maildev
+    port: 25
+    username: username@test.com
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+kafka-topics:
+  created-user: created_user_topic
+  updated-user: updated_user_topic
+  deleted-user: deleted_user_topic
+server:
+  port: 8081

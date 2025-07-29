@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOSTNAME:localhost}:5432/krainet_auth
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    change-log: db.changelog-master.yaml
+
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+
+security:
+  jwt:
+    secret_key: ${JWT_SECRET_KEY:4eeab38d706831be4b36612ead768ef8182d1dd6f0e14e5dc934652e297fb16a}
+    access_token_expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:36000000}
+    refresh_token_expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:252000000}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+kafka-topics:
+  created-user: created_user_topic
+  updated-user: updated_user_topic
+  deleted-user: deleted_user_topic

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig">
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotModelValue" value="auth-service:auth-service" />
+    <option name="sourceModelValue" value="auth-service:entityManagerFactory" />
+    <option name="targetDbValue" value="19b69dcd-f1a1-4ed2-ad69-5d9c36e3d35f" />
+  </component>
+</project>

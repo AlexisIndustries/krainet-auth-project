@@ -1,1 +1,83 @@
 services:
+  auth-service:
+    build:
+      context: auth-service
+    environment:
+      - DB_HOSTNAME=db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS=kafka:9092
+    ports:
+      - "8080:8080"
+    networks:
+      - krainet-auth-project-net
+    depends_on:
+      - db
+    restart: unless-stopped
+  notification-service:
+    build:
+      context: notification-service
+    environment:
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS=kafka:9092
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+    networks:
+      - krainet-auth-project-net
+    restart: unless-stopped
+  db:
+    image: "postgres:17"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=krainet_auth
+    volumes:
+      - ./postgres/db_data:/var/lib/postgresql/data
+    healthcheck:
+        test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+        interval: 10s
+        retries: 5
+    ports:
+      - 5432:5432
+    networks:
+      - krainet-auth-project-net
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - krainet-auth-project-net
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - krainet-auth-project-net
+  maildev:
+    image: maildev/maildev
+    container_name: maildev
+    ports:
+      - "1080:1080"
+      - "1025:25"
+    command: [ "--smtp", "25" ]
+    networks:
+      - krainet-auth-project-net
+
+volumes:
+  db_data:
+networks:
+  krainet-auth-project-net:
+    name: krainet-auth-project-net
