@@ -10,17 +10,17 @@ The system features role-based access control (USER/ADMIN), JWT authentication, 
 ## System Architecture
 ```
 +------------+       +------------+       +-----------------+
-| Auth       |       | Kafka      |       | Notification    |
+| Auth       |       | RabbitMQ   |       | Notification    |
 | Service    |-----> | (Message   |-----> | Service         |
 | (Spring    |       | Broker)    |       | (Spring Boot)   |
 | Boot)      |       +------------+       +-----------------+
 +------------+             
-       |
-       v
-+------------+
-| PostgreSQL |
-| Database   |
-+------------+
+       |                           |
+       v                           v
++------------+              +-------------+
+| PostgreSQL |              | MailDev     |
+| Database   |              | (SMTP Server)|
++------------+              +-------------+
 ```
 
 ## Features
@@ -30,6 +30,7 @@ The system features role-based access control (USER/ADMIN), JWT authentication, 
 - Email notifications for user events
 - Database migrations with Liquibase
 - Containerized deployment with Docker
+- MailDev SMTP server for email testing and development
 
 ## Prerequisites
 - Docker
@@ -53,6 +54,7 @@ The system will start with the following services:
 - Auth Service: http://localhost:8080
 - Notification Service: http://localhost:8081
 - PostgreSQL: port 5432
+- MailDev Web Interface: http://localhost:1080
 
 ### 3. Verify the installation
 Check running containers:
